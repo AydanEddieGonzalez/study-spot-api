@@ -1,6 +1,19 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from studyspots.database import create_db_and_tables
 
-app = FastAPI(title='Study Spot API')
+
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+
+
+
+
+app = FastAPI(title='Study Spot API', lifespan=lifespan)
 
 
 @app.get('/health')
