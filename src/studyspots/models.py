@@ -1,6 +1,7 @@
 from enum import Enum
 from sqlmodel import Field, SQLModel
 from typing import Optional
+from datetime import datetime, timezone
 
 class Noise(str, Enum):
     quiet = 'quiet'
@@ -31,3 +32,20 @@ class SpotUpdate(SQLModel):
 
 class SpotRead(SpotBase):
     id: int
+
+class RatingBase(SQLModel):
+    score: int = Field(ge=1, le=5)
+    comment: Optional[str] = Field(default=None, max_length=280)
+
+class Rating(RatingBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    spot_id: int = Field(foreign_key="spot.id")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class RatingCreate(RatingBase):
+    pass
+
+class RatingRead(RatingBase):
+    id: int
+    spot_id: int
+    created_at: datetime
