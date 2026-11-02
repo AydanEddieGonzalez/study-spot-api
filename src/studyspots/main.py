@@ -55,3 +55,12 @@ def update_spot(spot_id: int, spot_in: SpotUpdate, session: Session = Depends(ge
     session.refresh(spot)
 
     return spot
+
+@app.delete("/spots/{spot_id}", status_code=204)
+def delete_spot(spot_id: int, session: Session = Depends(get_session)):
+    spot = session.get(Spot, spot_id)
+    if spot is None:
+        raise HTTPException(status_code=404, detail="Spot not found")
+
+    session.delete(spot)
+    session.commit()
