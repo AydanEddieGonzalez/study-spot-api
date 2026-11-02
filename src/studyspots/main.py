@@ -19,6 +19,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title='Study Spot API', lifespan=lifespan)
 
 
+def to_spot_read(spot: Spot, session: Session) -> SpotRead:
+    ratings = session.exec(select(Rating).where(Rating.spot_id == spot.id)).all()
+    count = len(ratings)
+    avg = sum(r.score for r in ratings) / count if count > 0 else None
+    return SpotRead(**spot.model_dump(), avg_rating=avg, rating_count=count)
+
+
 @app.get('/health')
 def health():
     return {'status': 'ok'}
@@ -29,19 +36,19 @@ def create_spot(spot_in: SpotCreate, session: Session = Depends(get_session)):
     session.add(spot)
     session.commit()
     session.refresh(spot)
-    return spot
+    return to_spot_read(spot, session)
 
 @app.get('/spots', response_model=list[SpotRead])
 def list_spots(session: Session = Depends(get_session)):
     spots = session.exec(select(Spot)).all()
-    return spots
+    return [to_spot_read(s, session) for s in spots]
 
 @app.get('/spots/{spot_id}', response_model=SpotRead)
 def get_spot(spot_id: int, session: Session = Depends(get_session)):
     spot = session.get(Spot, spot_id)
     if spot is None:
         raise HTTPException(status_code=404, detail='Spot not found')
-    return spot
+    return to_spot_read(spot, session)
 
 @app.patch("/spots/{spot_id}", response_model=SpotRead)
 def update_spot(spot_id: int, spot_in: SpotUpdate, session: Session = Depends(get_session)):
@@ -57,7 +64,7 @@ def update_spot(spot_id: int, spot_in: SpotUpdate, session: Session = Depends(ge
     session.commit()
     session.refresh(spot)
 
-    return spot
+    return to_spot_read(spot, session)
 
 @app.delete("/spots/{spot_id}", status_code=204)
 def delete_spot(spot_id: int, session: Session = Depends(get_session)):
@@ -65,6 +72,10 @@ def delete_spot(spot_id: int, session: Session = Depends(get_session)):
     if spot is None:
         raise HTTPException(status_code=404, detail="Spot not found")
 
+    ratings = session.exec(select(Rating).where(Rating.spot_id == spot_id)).all()
+    for r in ratings:
+        session.delete(r)
+    
     session.delete(spot)
     session.commit()
 

@@ -32,6 +32,8 @@ class SpotUpdate(SQLModel):
 
 class SpotRead(SpotBase):
     id: int
+    avg_rating: Optional[float] = None
+    rating_count: int = 0
 
 class RatingBase(SQLModel):
     score: int = Field(ge=1, le=5)
