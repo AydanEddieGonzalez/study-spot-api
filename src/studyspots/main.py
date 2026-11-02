@@ -3,7 +3,10 @@ from sqlmodel import Session, select
 
 from contextlib import asynccontextmanager
 from studyspots.database import create_db_and_tables, get_session
-from studyspots.models import Spot, SpotCreate, SpotRead, SpotUpdate
+from studyspots.models import (
+    Rating, RatingCreate, RatingRead,
+    Spot, SpotCreate, SpotRead, SpotUpdate,
+)
 
 
 
@@ -64,3 +67,25 @@ def delete_spot(spot_id: int, session: Session = Depends(get_session)):
 
     session.delete(spot)
     session.commit()
+
+@app.post("/spots/{spot_id}/ratings", response_model=RatingRead, status_code=201)
+def create_rating(spot_id: int, rating_in: RatingCreate, session: Session = Depends(get_session)):
+    spot = session.get(Spot, spot_id)
+    if spot is None:
+        raise HTTPException(status_code=404, detail="Spot not found")
+
+    rating = Rating.model_validate(rating_in, update={"spot_id": spot_id})
+
+    session.add(rating)
+    session.commit()
+    session.refresh(rating)
+    return rating
+
+@app.get("/spots/{spot_id}/ratings", response_model=list[RatingRead])
+def list_ratings(spot_id: int, session: Session = Depends(get_session)):
+    spot = session.get(Spot, spot_id)
+    if spot is None:
+        raise HTTPException(status_code=404, detail="Spot not found")
+
+    ratings = session.exec(select(Rating).where(Rating.spot_id == spot_id)).all()
+    return ratings
