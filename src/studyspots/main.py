@@ -3,8 +3,10 @@ from sqlmodel import Session, select
 
 from contextlib import asynccontextmanager
 from studyspots.database import create_db_and_tables, get_session
+from typing import Optional
+from sqlmodel import Session, col, select
 from studyspots.models import (
-    Rating, RatingCreate, RatingRead,
+    Noise, Rating, RatingCreate, RatingRead,
     Spot, SpotCreate, SpotRead, SpotUpdate,
 )
 
@@ -39,8 +41,25 @@ def create_spot(spot_in: SpotCreate, session: Session = Depends(get_session)):
     return to_spot_read(spot, session)
 
 @app.get('/spots', response_model=list[SpotRead])
-def list_spots(session: Session = Depends(get_session)):
-    spots = session.exec(select(Spot)).all()
+def list_spots(
+    q: Optional[str] = None,
+    noise: Optional[Noise] = None,
+    outlets: Optional[bool] = None,
+    wifi: Optional[bool] = None,
+    session: Session = Depends(get_session),
+):
+    query = select(Spot)
+
+    if q is not None:
+        query = query.where(col(Spot.name).ilike(f"%{q}%"))
+    if noise is not None:
+        query = query.where(Spot.noise == noise)
+    if outlets is not None:
+        query = query.where(Spot.has_outlets == outlets)
+    if wifi is not None:
+        query = query.where(Spot.has_wifi == wifi )
+
+    spots = session.exec(query).all()
     return [to_spot_read(s, session) for s in spots]
 
 @app.get('/spots/{spot_id}', response_model=SpotRead)
