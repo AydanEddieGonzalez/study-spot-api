@@ -1,9 +1,9 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Session, select
 
 from contextlib import asynccontextmanager
 from studyspots.database import create_db_and_tables, get_session
-from typing import Optional
+from typing import Literal, Optional
 from sqlmodel import Session, col, select
 from studyspots.models import (
     Noise, Rating, RatingCreate, RatingRead,
@@ -47,6 +47,8 @@ def list_spots(
     outlets: Optional[bool] = None,
     wifi: Optional[bool] = None,
     session: Session = Depends(get_session),
+    min_rating: Optional[float] = Query(default=None, ge=1, le=5),
+    sort: Optional[Literal["rating", "name"]] = None,
 ):
     query = select(Spot)
 
@@ -60,7 +62,17 @@ def list_spots(
         query = query.where(Spot.has_wifi == wifi )
 
     spots = session.exec(query).all()
-    return [to_spot_read(s, session) for s in spots]
+    results = [to_spot_read(s, session) for s in spots]
+
+    if min_rating is not None:
+        results = [s for s in results if s.avg_rating is not None and s.avg_rating >= min_rating]
+
+    if sort == "rating":
+        results.sort(key=lambda s: s.avg_rating or 0, reverse=True)
+    elif sort == "name":
+        results.sort(key=lambda s: s.name.lower())
+
+    return results
 
 @app.get('/spots/{spot_id}', response_model=SpotRead)
 def get_spot(spot_id: int, session: Session = Depends(get_session)):
