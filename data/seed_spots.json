@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Moffitt Library",
+    "location": "Moffitt, 4th floor",
+    "noise": "quiet",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 5, "comment": "Outlets at almost every seat"},
+      {"score": 4, "comment": "Fills up fast during midterms"},
+      {"score": 5}
+    ]
+  },
+  {
+    "name": "Doe Library North Reading Room",
+    "location": "Doe Library, 2nd floor",
+    "noise": "quiet",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 5, "comment": "Beautiful room, very focused"},
+      {"score": 4}
+    ]
+  },
+  {
+    "name": "Gardner Main Stacks",
+    "location": "Below Doe Library",
+    "noise": "quiet",
+    "has_outlets": false,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 4, "comment": "Silent but few outlets"},
+      {"score": 3}
+    ]
+  },
+  {
+    "name": "Kresge Engineering Library",
+    "location": "Bechtel Engineering Center",
+    "noise": "quiet",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 4, "comment": "Good for problem sets"}
+    ]
+  },
+  {
+    "name": "MLK Student Union",
+    "location": "MLK Jr. Building, Lower Sproul",
+    "noise": "loud",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 2, "comment": "Too busy at lunch"},
+      {"score": 3, "comment": "Fine for group work"}
+    ]
+  },
+  {
+    "name": "Free Speech Movement Cafe",
+    "location": "Moffitt, ground floor",
+    "noise": "moderate",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 4, "comment": "Coffee right there"},
+      {"score": 3}
+    ]
+  },
+  {
+    "name": "Caffe Strada",
+    "location": "College Ave and Bancroft Way",
+    "noise": "loud",
+    "has_outlets": false,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 3, "comment": "Great patio, hard to focus"}
+    ]
+  },
+  {
+    "name": "Berkeley Public Library Central",
+    "location": "Kittredge St, Downtown Berkeley",
+    "noise": "quiet",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 4, "comment": "Less crowded than campus"}
+    ]
+  },
+  {
+    "name": "Long Business Library",
+    "location": "Haas School of Business",
+    "noise": "moderate",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": []
+  },
+  {
+    "name": "East Asian Library",
+    "location": "C.V. Starr East Asian Library",
+    "noise": "quiet",
+    "has_outlets": true,
+    "has_wifi": true,
+    "ratings": [
+      {"score": 5, "comment": "Hidden gem, always a seat"}
+    ]
+  }
+]
