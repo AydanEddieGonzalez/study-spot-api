@@ -9,3 +9,5 @@ from studyspots.models import Rating, RatingCreate, Spot, SpotCreate
 SEED_FILE = Path(__file__).resolve().parents[2] / "data" / "seed_spots.json"
 
 
+if __name__ == "__main__":
+    seed()
